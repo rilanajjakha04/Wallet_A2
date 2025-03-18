@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LibraryService {
+    // menyimpan semua buku
     private List<Book> books = new ArrayList<>();
 
     public List<Book> getAllBooks() {
@@ -16,6 +17,17 @@ public class LibraryService {
         books.removeIf(book -> book.getIsbn().equals(isbn));
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

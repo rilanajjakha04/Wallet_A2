@@ -33,7 +33,7 @@ public class LibraryHelperTest {
     public void testSaveEmptyBooks() {
         List<Book> books = new ArrayList<>();
         helper.saveBook(books);
-
+        // untuk memastikan bahwa metode storeData() tidak pernah dipanggil
         verify(service, never()).storeData(any());
     }
 
@@ -43,7 +43,7 @@ public class LibraryHelperTest {
         books.add(new Book("Java Basics", "123", "Rila"));
         books.add(new Book("OOP", "456", "Nana"));
         helper.saveBook(books);
-
+        // memastikan bahwa metode storeData() benar-benar dipanggil
         verify(service).storeData(books);
     }
 
@@ -54,21 +54,26 @@ public class LibraryHelperTest {
         books.add(new Book("OOP", "456", "Nana"));
         when(service.getAllBooks()).thenReturn(books);
 
+        // membuat simulasi bahwa metode deleteBook(String isbn) akan menghapus buku berdasarkan ISBN-nya.
         doAnswer(invocation -> {
             String isbn = invocation.getArgument(0);
             books.removeIf(book -> book.getIsbn().equals(isbn));
             return null;
         }).when(service).deleteBook(anyString());
 
+        // memeriksa apakah buku dengan ISBN "123" masih ada dalam daftar
         Assertions.assertTrue(service.getAllBooks().stream().anyMatch(book -> book.getIsbn().equals("123")));
         helper.deleteBook("123");
+        // mengecek kembali apakah buku dengan ISBN "123" sudah tidak ada lagi dalam daftar
         Assertions.assertFalse(service.getAllBooks().stream().anyMatch(book -> book.getIsbn().equals("123")));
     }
 
     @Test
     public void testDeleteBookThrowsException() {
+        // mensimulasikan bahwa jika deleteBook("999") dipanggil, maka akan melempar pengecualian (Exception).
         doThrow(new RuntimeException("Book not found")).when(service).deleteBook("999");
 
+        // pemanggilan ‘helper.deleteBook("999")’ memang benar-benar menghasilkan pengecualian
         Assertions.assertThrows(RuntimeException.class, () -> helper.deleteBook("999"));
     }
 
